@@ -120,7 +120,7 @@ def receive(block):
 					delete block(view--)
 				some_block = some_block.parent
 			final_block = grandparent
-	else timeout()
+	else: timeout()
 
 def receive(vote):
 	if vote.block missing: download(vote.block) # download the missing block based on its hash
