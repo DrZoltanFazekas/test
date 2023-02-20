@@ -46,6 +46,8 @@ The functions defined in the next section rely on primitives we do not specify i
 + ```supermajority(signers)``` returns whether the signers represent the supermajority
 + ```reset()``` restarts the timer which calls timeout when it expires
 + ```download(hash)``` and ```download(view)``` fetches a missing block from peer nodes
++ ```send(message, node)``` sends the message (vote or new view message) to the node
++ ```broadcast(block)``` sends the proposed block to every validator incl. the leader
 + ```extends(block, ancestor)``` returns whether there is a chain between the block and the ancestor
 + ```commit(ancestor, block)``` commits the descendants of ancestor along the chain to the block
 + ```sign(message)``` creates a bls signature on the message using the node's private key
@@ -91,10 +93,12 @@ def receive(block):
 	elif !extends(block, final_block): return # trace back along the chain to detect the block where equivocation happened
 	if !verify(block.hash, block.signature, leader(block.view)): return
 	if block.qc != None:
+		if block.qc.block.view <= final_block.view: return
 		if !verify(block.qc, block.qc.signature, block.qc.signers): return
-	if block.agg_qc != None:
+	elif block.agg_qc != None:
 		if !batch_verify((block.agg_qc.signers[i], block.agg_qc.view, block.agg_qc.qcs[i]) for i in 0..len(block.agg_qc.signers), block.agg_qc.signature, block.agg_qc.signers): return
 		block.agg_qc.high_qc = qc in block.agg_qc.qcs such that qc.block.view == max(all.block.view of all in block.agg_qc.qcs)
+		if block.agg_qc.high_qc.view <= final_block.view: return
 		if !verify(block.agg_qc.high_qc, block.agg_qc.high_qc.signature, block.agg_qc.high_qc.signers): return
 	store block
 	adjust_high_qc_and_view(block.qc, block.agg_qc)
@@ -104,7 +108,7 @@ def receive(block):
 		vote.signer = node_index
 		vote.block = block.hash
 		vote.signature = sign(block.hash)
-		send vote to leader(cur_view++)
+		send(vote, leader(cur_view++))
 		reset()
 		grandparent = try_commit(block)
 		if grandparent != None: 
@@ -139,7 +143,7 @@ def receive(vote):
 			block.agg_qc = None
 			compute block.hash
 			block.signature = sign(block.hash)
-			broadcast block
+			broadcast(block)
 
 def receive(new_view):
 	if new_view.high_qc.block missing: download(new_view.high_qc.block) # download the missing block based on its hash
@@ -162,7 +166,7 @@ def receive(new_view):
 			block.qc = None
 			compute block.hash
 			block.signature = sign(block.hash)
-			broadcast block
+			broadcast(block)
 
 def timeout(): # called automatically when the timer expires
 	cur_view++
@@ -171,5 +175,5 @@ def timeout(): # called automatically when the timer expires
 	new_view.view = cur_view
 	new_view.high_qc = high_qc
 	new_view.signature = sign((node_index, cur_view, high_qc))
-	send new_view to leader(cur_view)
+	send(new_view, leader(cur_view))
 ```
