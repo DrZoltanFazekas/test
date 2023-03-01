@@ -91,12 +91,12 @@ def adjust_high_qc_and_view(qc, agg_qc):
 
 def receive(block):
 	if block.hash already stored: return
+	if block.view already stored with different block.hash: return
 	if block.view <= final_block.view: return # equivocation
 	if block.parent missing: download(block.parent)
 	elif !extends(block, final_block): return # trace back along the chain to detect the block where equivocation happened
 	if !verify(block.hash, block.signature, leader(block.view)): return
 	if block.qc != None:
-		if block.qc.block.view <= final_block.view: return
 		if !supermajority(block.qc.signers): return
 		if !verify(block.qc, block.qc.signature, block.qc.signers): return
 	elif block.agg_qc != None:
