@@ -3,7 +3,7 @@ The pseudocode below serves as our specification for the implementation of pipel
 Types
 ----
 A ```block``` has the following fields:
-+ ```parent```
++ ```parent``` hash used to refer to the respective block
 + ```view```
 + ```qc```
 + ```agg_qc```
@@ -11,7 +11,8 @@ A ```block``` has the following fields:
 + ```transactions```
 
 A ```vote``` has the following fields:
-+ ```block```
++ ```block``` hash used to refer to the respective block
++ ```view``` same as ```block.view```
 + ```signer```
 + ```signature```
 
@@ -22,7 +23,8 @@ A ```new_view``` message has the following fields:
 + ```signature```
 
 A ```qc``` has the following fields:
-+ ```block```
++ ```block``` hash used to refer to the respective block
++ ```view``` same as ```block.view```
 + ```signers```
 + ```signature```
 
@@ -37,7 +39,7 @@ Variables
 Every node keeps track of its local
 + ```cur_view```
 + ```high_qc```
-+ ```final_block```
++ ```final_block``` latest committed block
 
 Prerequisites
 ----
@@ -74,16 +76,16 @@ def try_commit(block):
 
 def adjust_high_qc_and_view(qc, agg_qc):
 	if qc != None:
-		if qc.block.view > high_qc.block.view:
+		if qc.view > high_qc.view:
 			high_qc = qc
-		if qc.block.view > cur_view: # download the blocks of the missed views
-			while cur_view++ <= qc.block.view: download(cur_view) 
+		if qc.view > cur_view: # download the blocks of the missed views
+			while cur_view++ <= qc.view: download(cur_view) 
 			reset()
 	elif agg_qc != None:
-		if agg_qc.high_qc.block.view != high_qc.block.view:
+		if agg_qc.high_qc.view != high_qc.view:
 			high_qc = agg_qc.high_qc # release the lock and adopt the lock of the supermajority
-		if agg_qc.high_qc.block.view > cur_view: # download the blocks of the missed views
-			while cur_view++ <= agg_qc.high_qc.block.view: download(cur_view)
+		if agg_qc.high_qc.view > cur_view: # download the blocks of the missed views
+			while cur_view++ <= agg_qc.high_qc.view: download(cur_view)
 			reset()
 
 def receive(block):
@@ -94,11 +96,14 @@ def receive(block):
 	if !verify(block.hash, block.signature, leader(block.view)): return
 	if block.qc != None:
 		if block.qc.block.view <= final_block.view: return
+		if !supermajority(block.qc.signers): return
 		if !verify(block.qc, block.qc.signature, block.qc.signers): return
 	elif block.agg_qc != None:
+		if !supermajority(block.agg_qc.signers): return
 		if !batch_verify((block.agg_qc.signers[i], block.agg_qc.view, block.agg_qc.qcs[i]) for i in 0..len(block.agg_qc.signers), block.agg_qc.signature, block.agg_qc.signers): return
 		block.agg_qc.high_qc = qc in block.agg_qc.qcs such that qc.block.view == max(all.block.view of all in block.agg_qc.qcs)
 		if block.agg_qc.high_qc.view <= final_block.view: return
+		if !supermajority(block.agg_qc.high_qc.signers): return
 		if !verify(block.agg_qc.high_qc, block.agg_qc.high_qc.signature, block.agg_qc.high_qc.signers): return
 	store block
 	adjust_high_qc_and_view(block.qc, block.agg_qc)
@@ -107,6 +112,7 @@ def receive(block):
 			while cur_view++ < block.view: download(cur_view) 
 		vote.signer = node_index
 		vote.block = block.hash
+		vote.view = block.view
 		vote.signature = sign(block.hash)
 		send(vote, leader(cur_view++))
 		reset()
@@ -123,20 +129,20 @@ def receive(block):
 	else: timeout()
 
 def receive(vote):
-	if vote.block missing: download(vote.block) # download the missing block based on its hash
-	if node_index != leader(vote.block.view + 1): return # the vote must be sent to someone else
-	if vote.block.view < cur_view - 1: return # the vote arrived too late, the vote doesn't count anymore
+	if node_index != leader(vote.view + 1): return # the vote must be sent to someone else
+	if vote.view < cur_view - 1: return # the vote arrived too late, the vote doesn't count anymore
 	if !verify(vote.block, vote.signature, vote.signer): return
 	collection[vote.block].append(vote.signature, vote.signer)
 	if supermajority([all.signer for all in collection[vote.block]]):
-		if vote.block.view > cur_view: # download the blocks of the missed views
-			while cur_view++ < vote.block.view: download(cur_view) 
-			cur_view = vote.block.view + 1 # supermajority has voted for vote.block and advanced to vote.block.view + 1
+		if vote.view > cur_view: # download the blocks of the missed views
+			while cur_view++ < vote.view: download(cur_view) 
+			cur_view = vote.view + 1 # supermajority has voted for vote.block and advanced to vote.view + 1
 			reset()
-		if cur_view == vote.block.view + 1:
+		if cur_view == vote.view + 1:
 			high_qc.signature = aggregate([all.signature for all in collection[vote.block]])
 			high_qc.signers = [all.signer for all in collection[vote.block]]
 			high_qc.block = vote.block
+			high_qc.view = vote.view
 			block.parent = vote.block
 			block.view = cur_view
 			block.qc = high_qc
