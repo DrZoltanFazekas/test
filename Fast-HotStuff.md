@@ -5,41 +5,42 @@ Types
 A ```block``` has the following fields:
 + ```parent``` hash used to refer to the respective block
 + ```view```
-+ ```qc```
-+ ```agg_qc```
-+ ```signature```
++ ```qc``` missing if ```agg_qc``` is present
++ ```agg_qc``` missing if ```qc``` is present
++ ```signature``` on the proposed ```block```
 + ```transactions```
 
 A ```vote``` has the following fields:
 + ```block``` hash used to refer to the respective block
 + ```view``` same as ```block.view```
 + ```signer```
-+ ```signature```
++ ```signature``` on the voted ```block``` and ```signer```'s current ```view```
 
 A ```new_view``` message has the following fields:
 + ```view```
 + ```high_qc```
 + ```signer```
-+ ```signature```
++ ```signature``` on the ```signer```'s index, current ```view``` and ```high_qc```
 
 A ```qc``` has the following fields:
 + ```block``` hash used to refer to the respective block
 + ```view``` same as ```block.view```
 + ```signers```
-+ ```signature```
++ ```signature``` on ```block``` and ```view``` but aggregated
 
 An ```agg_qc``` has the following fields:
 + ```view```
 + ```qcs```
 + ```signers```
-+ ```signature```
++ ```signature``` on the ```signers```' indices, current ```view``` and highest ```qcs``` but aggregated
 
 Variables
 ----
 Every node keeps track of its local
-+ ```cur_view```
-+ ```high_qc```
-+ ```final_block``` latest committed block
++ ```node_index``` the index of the node in the committee
++ ```cur_view``` the current view
++ ```high_qc``` the highest qc
++ ```final_block``` the latest committed block
 
 Prerequisites
 ----
@@ -54,7 +55,7 @@ The functions defined in the next section rely on primitives we do not specify i
 + ```commit(ancestor, block)``` commits the descendants of ancestor along the chain to the block
 + ```sign(message)``` creates a bls signature on the message using the node's private key
 + ```aggregate(signatures)``` aggregates the bls signatures and returns the resulting signature
-+ ```verify(message, signature, signers)``` verifies if the (aggregated) bls signature on the message corresponds to the public key(s) of the signer(s)
++ ```verify(message, signature, signers)``` verifies if the (aggregated) bls signature on the message corresponds to the (aggregated) public key(s) of the signer(s)
 + ```batch_verify(messages, signature, signers)``` batch verifies if the aggregated bls signature on the messages corresponds to the public key of the signers
 
 Functions
@@ -113,7 +114,7 @@ def receive(block):
 		vote.signer = node_index
 		vote.block = block.hash
 		vote.view = block.view
-		vote.signature = sign(block.hash)
+		vote.signature = sign(block.hash, block.view)
 		send(vote, leader(cur_view++))
 		reset()
 		grandparent = try_commit(block)
@@ -131,7 +132,7 @@ def receive(block):
 def receive(vote):
 	if node_index != leader(vote.view + 1): return # the vote must be sent to someone else
 	if vote.view < cur_view - 1: return # the vote arrived too late, the vote doesn't count anymore
-	if !verify(vote.block, vote.signature, vote.signer): return
+	if !verify((vote.block, vote.view), vote.signature, vote.signer): return
 	collection[vote.block].append(vote.signature, vote.signer)
 	if supermajority([all.signer for all in collection[vote.block]]):
 		if vote.view > cur_view: # download the blocks of the missed views
