@@ -154,10 +154,10 @@ def receive(vote):
 
 def receive(new_view):
 	if new_view.high_qc.block missing: download(new_view.high_qc.block) # download the missing block based on its hash
-	adjust_high_qc_and_view(new_view.high_qc, None)
 	if node_index != leader(new_view.view): return # the message must be sent to someone else
 	if new_view.view < cur_view: return # the message arrived too late, it doesn't count anymore
 	if !verify((new_view.signer, new_view.view, new_view.high_qc), new_view.signature, new_view.signer): return
+	adjust_high_qc_and_view(new_view.high_qc, None)
 	collection.[new_view.view].append(new_view.signature, new_view.signer, new_view.high_qc)
 	if supermajority([all.signer for all in collection[new_view.view]]):
 		if new_view.view > cur_view: # download the blocks of the missed views
