@@ -47,7 +47,7 @@ Prerequisites
 The functions defined in the next section rely on primitives we do not specify in detail for the sake of brevity: 
 + ```leader(view)``` returns the leader of the view
 + ```supermajority(signers)``` returns whether the signers represent the supermajority
-+ ```reset()``` restarts the timer which calls timeout when it expires
++ ```reset()``` restarts the timer which calls timeout when it expires with a timeout period of min_timeout + 2 ** (cur_view - high_qc.view)
 + ```download(hash)``` and ```download(view)``` fetches a missing block from peer nodes
 + ```send(message, node)``` sends the message (vote or new view message) to the node
 + ```broadcast(block)``` sends the proposed block to every validator incl. the leader
@@ -158,7 +158,7 @@ def receive(new_view):
 	if new_view.view < cur_view: return # the message arrived too late, it doesn't count anymore
 	if !verify((new_view.signer, new_view.view, new_view.high_qc), new_view.signature, new_view.signer): return
 	adjust_high_qc_and_view(new_view.high_qc, None)
-	collection.[new_view.view].append(new_view.signature, new_view.signer, new_view.high_qc)
+	collection[new_view.view].append(new_view.signature, new_view.signer, new_view.high_qc)
 	if supermajority([all.signer for all in collection[new_view.view]]):
 		if new_view.view > cur_view: # download the blocks of the missed views
 			while cur_view++ < new_view.view: download(cur_view) # supermajority has sent a new view message and advanced to new_view.view
