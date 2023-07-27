@@ -47,7 +47,7 @@ Prerequisites
 The functions defined in the next section rely on primitives we do not specify in detail for the sake of brevity: 
 + ```leader(view)``` returns the leader of the view
 + ```supermajority(signers)``` returns whether the signers represent the supermajority
-+ ```reset()``` restarts the timer which calls timeout when it expires with a timeout period of min_timeout + 2 ** (cur_view - high_qc.view)
++ ```reset()``` restarts the timer which calls timeout when it expires with a timeout period of ```min_timeout + 2 ** (cur_view - high_qc.view)```
 + ```download(hash)``` and ```download(view)``` fetches a missing block from peer nodes
 + ```send(message, node)``` sends the message (vote or new view message) to the node
 + ```broadcast(block)``` sends the proposed block to every validator incl. the leader
