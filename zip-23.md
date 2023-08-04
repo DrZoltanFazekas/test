@@ -19,7 +19,7 @@ The mining rewards consist of base rewards and co-signer rewards. While the dist
 
 ## Specification
 
-The proposal requires the following changes to the Zilliqa protocol.
+We propose to suspend the operation of the 3 non-DS shards until the launch of new shard based on the Zilliqa 2.0 architecture. The implementation of this proposal requires the following changes to the current Zilliqa protocol.
 
 ### Omitting Shard PoW Submissions
 
