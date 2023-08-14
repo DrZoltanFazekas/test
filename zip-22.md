@@ -10,13 +10,13 @@ This ZIP proposes mixed validator commitees formed from mining nodes and staked 
 
 ## Motivation
 
-Currently, the pBFT consensus is run by mining nodes only. Due to the heterogenous hashrates of the participating mining pools, at times up to 65% of the total network hashrate is controlled by a single pool. This undermines the security of the pBFT consensus.
+Currently, the pBFT consensus is run by mining nodes only, most of which participate in mining pools with various hashrates. If mining pools become more concentrated, it is possible that the fraction of the hashrate controlled by a single pool might grow to close to the 67% level which would pose an issue for the pBFT consensus.
 
 Zilliqa 2.0 will be a Proof of Stake (PoS) network. For a smooth transition from the current network to Zilliqa 2.0, we need a PoS validator community. SSNs are predestined to become the first PoS validators as their accumulated delegated stake already amounts to approx. 33% of the current ZIL supply. To establish themselves as future PoS validators and to help solve the centralization issue described above, SSNs shall be enable to join the DS committee.
 
 ## Specification
 
-The current proposal presumes desharding described in ZIP-23 [1] to be implemented simultenously, so that the hybrid consensus considers only a single DS committee.
+The current proposal presumes desharding described in ZIP-23 [1] to be implemented simultaneously, so that the hybrid consensus considers only a single DS committee.
 
 The proposal requires changes in the following three areas.
 
