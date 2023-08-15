@@ -5,12 +5,12 @@
 
 ## Abstract
 
-This ZIP proposes mixed validator commitees formed from mining nodes and staked seed nodes (SSNs) to increase the decentralization of the pBFT consensus.
+This ZIP proposes mixed validator committees formed from mining nodes and staked seed nodes (SSNs) to increase the decentralization of the pBFT consensus.
 
 
 ## Motivation
 
-Currently, the pBFT consensus is run by mining nodes only, most of which participate in mining pools with various hashrates. If mining pools become more concentrated, it is possible that the fraction of the hashrate controlled by a single pool might grow to close to the 67% level which would pose an issue for the pBFT consensus.
+Currently, the pBFT consensus is run by mining nodes, most of which participate in mining pools with various hashrates. However, the transition of Ethereum from PoW to PoS in September 2022 caused massive changes in the Ethash mining landscape. If mining pools become more concentrated, it is possible that the fraction of the hashrate controlled by a single pool might grow to close to the 67% level which would pose an issue for the pBFT consensus.
 
 Zilliqa 2.0 will be a Proof of Stake (PoS) network. For a smooth transition from the current network to Zilliqa 2.0, we need a PoS validator community. SSNs are predestined to become the first PoS validators as their accumulated delegated stake already amounts to approx. 33% of the current ZIL supply. To establish themselves as future PoS validators and to help solve the centralization issue described above, SSNs shall be enable to join the DS committee.
 
@@ -36,7 +36,7 @@ To implement this, the consensus must take a snapshot of the validators' stake f
 
 Initially, participating in the consensus will be optional. If SSNs opt out, they will continue to receive at most 50% of the staking reward based on the current reward distribution mechanism. In order to earn up to 100% of the staking reward, they must participate in the consensus. At a later stage, participation may become mandatory by reducing the staking reward of non-participating SSNs to zero.
 
-Staking rewards of participating SSNs will not be issued based their availability tested by the verifier node, but based on their active contribution to the pBFT consensus. The amount of staking reward they receive will be determined according to the number of blocks in the DS epoch they co-sign within the window defined in the protocol. Mining rewards remain unaffected by this proposal. 
+Staking rewards of participating SSNs will not be issued based on their availability tested by the verifier node, but based on their active contribution to the pBFT consensus. The amount of staking reward they receive will be determined according to the number of blocks in the DS epoch they co-sign within the window defined in the protocol. Mining rewards remain unaffected by this proposal. 
 
 
 ## Future Work
