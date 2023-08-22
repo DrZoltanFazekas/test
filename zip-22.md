@@ -22,7 +22,7 @@ The proposal requires changes in the following three areas.
 
 ### Validator Selection
 
-In order to include SSNs in the committee, the number of guard nodes operated by Zilliqa will be reduced so that the committee size remains 600. We invite all active SSNs (currently 23 according to [2]) to join the committee as long as they fulfill the minimum stake requirement.
+We invite all active SSNs (currently 23 according to [2]) to join the DS committee as long as they fulfill the minimum stake requirement.
 
 The rules for inclusion of mining nodes based on their PoW submissions remains unchanged. With the current DS difficulty and total network hashrate, around 10 new mining nodes join the committee every epoch, replacing other mining nodes that have been part of the committee for the longest time.
 
@@ -37,6 +37,13 @@ To implement this, the consensus must take a snapshot of the validators' stake f
 Initially, participating in the consensus will be optional. If SSNs opt out, they will continue to receive at most 50% of the staking reward based on the current reward distribution mechanism. In order to earn up to 100% of the staking reward, they must participate in the consensus. At a later stage, participation may become mandatory by reducing the staking reward of non-participating SSNs to zero.
 
 Staking rewards of participating SSNs will not be issued based on their availability tested by the verifier node, but based on their active contribution to the pBFT consensus. The amount of staking reward they receive will be determined according to the number of blocks in the DS epoch they co-sign within the window defined in the protocol. Mining rewards remain unaffected by this proposal. 
+
+
+## Security
+
+The current PoW-based validator selection relies on the adversarial assumption formulated in the Zilliqa whitepaper [3]: "*We assume that the mining network at any point of time has a fraction of byzantine nodes/identities with a total computational power that is at most* $f<\frac{n}{4}$ *of the complete network, where* $0 ≤ f < 1$ *and* $n$ *is the total size of the network.*" Furthermore, "*one can show that if the DS committee size is sufficiently large (say above 800), then among the* $n_0$ *members of the committee at most* $\frac{1}{3}$ *are byzantine with high probability.*"
+
+We can apply a similar argument in the PoS setting by assuming that byzantine nodes control at most $\tilde{f}<\frac{\tilde{n}}{4}$ fraction of the total stake $\tilde{n}$, where $0 ≤ \tilde{f} < 1$. Analogously to the requirement regarding the DS committee size in the whitepaper, it is easy to see that if the committee's stake size is sufficiently large (above the $\frac{3\tilde{n}}{4}$ threshold), then the fraction of the committee's stake controlled by byzantine members of the committee is less than $\frac{1}{3}$. In order to be safe as per the formulated adversarial assumption, we aim for more than 75% of the total stake delegated to SSNs to participate in the consensus and incentivize the SSNs accordingly.
 
 
 ## Future Work
