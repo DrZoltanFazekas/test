@@ -14,7 +14,7 @@ The Zilliqa network uses 4 shards to process transactions in parallel. While 3 o
 
 The operation of the 3 shards requires up to 1680 mining nodes to join the network in every DS epoch. The current proposal eliminates the need for this high number of nodes and the mining costs related to their selection, thereby significantly reducing the overall operational costs and carbon footprint of the network.
 
-The mining rewards consist of base rewards and co-signer rewards. While the distribution of the base rewards is the same in the DS committee and in the 3 shards, the co-signer rewards are handled differently. In the non-DS shards, the first ⅔ of the nodes, based on how fast they provide their signature on the proposed block to the leader, receive an equal share of the co-signer reward. We will refer to these ⅔ as the fast ones. In the DS committee, however, all nodes that manage to send their signature in the defined window receive an equal share of the co-signer reward. This creates disparity between fast and slow mining pools, which the current proposal alleviates to an extent that we believe is acceptable for both.
+The mining rewards consist of base rewards and co-signer rewards. While all mining nodes receive the same share of the base reward, only the mining nodes that are among the first ⅔ to provide their signature on the proposed block to the leader receive an equal share of the co-signer reward. This creates a significant disparity between fast and slow mining pools, which the current proposal alleviates to an extent that we believe is acceptable for both.
 
 
 ## Specification
@@ -37,7 +37,7 @@ A variable called `m_sendAllToDS` in the code of the lookup node determines whet
 
 ### Adjusting Mining Rewards
 
-In order to maintain the same total amount of mining rewards as before desharding, we must multiply the rewards distributed among the DS committee members by the constant factor `2.78` established based on the average number of nodes that earned premium rewards before desharding.
+In order to maintain the same total amount of mining rewards as before desharding, we must multiply the rewards distributed among the DS committee members by the constant factor `2.78` established based on the average number of nodes that earned co-signer rewards before desharding.
 
 The reward adjustment does not change the fact that a fast node can earn up to 4 times more than a slow node during the same DS epoch. To alleviate this disparity to some extent, we multiply the co-signer reward by `0.6` and the base reward by `1.7`. The total amount of mining rewards remains unchanged and all of the pools will continue to earn at least 94% of their current rewards. At the same time, the maximum gap between fast and slow pools gets reduced from 4x to approx. 2x.
 
