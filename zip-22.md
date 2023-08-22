@@ -34,7 +34,9 @@ To implement this, the consensus must take a snapshot of the validators' stake f
 
 Initially, participating in the consensus will be optional. If SSNs opt out, they will continue to receive at most 50% of the staking reward based on the current reward distribution mechanism. In order to earn up to 100% of the staking reward, they must participate in the consensus. At a later stage, participation may become mandatory by reducing the staking reward of non-participating SSNs to zero.
 
-Staking rewards of participating SSNs will not be issued based on their availability tested by the verifier node, but based on their active contribution to the pBFT consensus. The amount of staking reward they receive will be determined according to the number of blocks in the DS epoch they co-sign within the window defined in the protocol. Mining rewards remain unaffected by this proposal. 
+Staking rewards of participating SSNs will not be issued based on their availability tested by the verifier node, but based on their active contribution to the pBFT consensus. The amount of staking reward they receive will be determined by the number of blocks in the DS epoch they co-sign.
+
+Mining rewards remain unaffected by this proposal. 
 
 
 ## Security
