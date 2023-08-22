@@ -37,9 +37,9 @@ A variable called `m_sendAllToDS` in the code of the lookup node determines whet
 
 ### Adjusting Mining Rewards
 
-In order to maintain the same total amount of mining rewards as before desharding, we must multiply the rewards distributed among the DS committee members by the constant factor 2.78 established based on the average number of nodes that earned premium rewards before desharding.
+In order to maintain the same total amount of mining rewards as before desharding, we must multiply the rewards distributed among the DS committee members by the constant factor `2.78` established based on the average number of nodes that earned premium rewards before desharding.
 
-The reward adjustment does not change the fact that a fast node can earn up to 4 times more than a slow node during the same DS epoch. To alleviate this disparity to some extent, we multiply the co-signer reward by 0.6 and the base reward by 1.7. The total amount of mining rewards remains unchanged and all of the pools will continue to earn at least 94% of their current rewards. At the same time, the maximum gap between fast and slow pools gets reduced from 4x to approx. 2x.
+The reward adjustment does not change the fact that a fast node can earn up to 4 times more than a slow node during the same DS epoch. To alleviate this disparity to some extent, we multiply the co-signer reward by `0.6` and the base reward by `1.7`. The total amount of mining rewards remains unchanged and all of the pools will continue to earn at least 94% of their current rewards. At the same time, the maximum gap between fast and slow pools gets reduced from 4x to approx. 2x.
 
 
 ## Future Work
