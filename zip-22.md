@@ -22,9 +22,7 @@ The proposal requires changes in the following three areas.
 
 ### Validator Selection
 
-We invite all active SSNs (currently 23 according to [2]) to join the DS committee as long as they fulfill the minimum stake requirement.
-
-The rules for inclusion of mining nodes based on their PoW submissions remains unchanged. With the current DS difficulty and total network hashrate, around 10 new mining nodes join the committee every epoch, replacing other mining nodes that have been part of the committee for the longest time.
+The rules for inclusion of mining nodes based on their PoW submissions remains unchanged. With the current DS difficulty and total network hashrate, around 10 new mining nodes join the committee every epoch, replacing other mining nodes that have been part of the committee for the longest time. Additionally, we invite all active SSNs (currently 23 according to [2]) to join the DS committee as long as they fulfill the minimum stake requirement.
 
 ### Consensus Rules
 
