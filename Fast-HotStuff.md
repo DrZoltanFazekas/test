@@ -102,7 +102,7 @@ def receive(block):
 	elif block.agg_qc != None:
 		if !supermajority(block.agg_qc.signers): return
 		if !batch_verify([(block.agg_qc.signers[i], block.agg_qc.view, block.agg_qc.qcs[i]) for i in 0..len(block.agg_qc.signers)], block.agg_qc.signature, block.agg_qc.signers): return
-		block.agg_qc.high_qc = qc in block.agg_qc.qcs if qc.block.view == max(all.block.view of all in block.agg_qc.qcs)
+		block.agg_qc.high_qc = [qc for qc in block.agg_qc.qcs if qc.block.view == max(all.block.view for all in block.agg_qc.qcs)][0]
 		if block.agg_qc.high_qc.view <= final_block.view: return
 		if !supermajority(block.agg_qc.high_qc.signers): return
 		if !verify(block.agg_qc.high_qc, block.agg_qc.high_qc.signature, block.agg_qc.high_qc.signers): return
