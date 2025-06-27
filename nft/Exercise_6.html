@@ -62,7 +62,7 @@
 
                 const blockNumber = await provider.getBlockNumber();
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                const ethBalance = await provider.getBalance(accounts[0]);
+                const ethBalance = 1n; await provider.getBalance(accounts[0]);
                 console.log(ethBalance);
                 updateDisplay("Connected and fetched!", blockNumber, ethBalance);
 
@@ -148,7 +148,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Holesky Test Page 0.0.3</h1>
+        <h1>Holesky Test Page 0.0.4</h1>
         <button id="connectButton">Connect to MetaMask & Get Block Number</button>
         <p id="status">Waiting for connection...</p>
         <p id="blockNumberDisplay"></p>
