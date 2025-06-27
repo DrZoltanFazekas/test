@@ -63,6 +63,7 @@
                 const blockNumber = await provider.getBlockNumber();
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 const ethBalance = await provider.getBalance(accounts[0]);
+                console.log(ethBalance);
                 updateDisplay("Connected and fetched!", blockNumber, ethBalance);
 
             } catch (error) {
@@ -78,16 +79,13 @@
             }
         }
 
-        // Event listener for the button
         connectButton.addEventListener('click', getHoleskyBlockNumber);
 
-        // Optional: Listen for accountsChanged and chainChanged events
         if (window.ethereum) {
             window.ethereum.on('accountsChanged', (accounts) => {
                 if (accounts.length === 0) {
                     updateDisplay("MetaMask account disconnected.");
                 } else {
-                    // Account changed or reconnected, try getting block number again
                     getHoleskyBlockNumber();
                 }
             });
@@ -150,7 +148,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Holesky Test Page 0.0.2</h1>
+        <h1>Holesky Test Page 0.0.3</h1>
         <button id="connectButton">Connect to MetaMask & Get Block Number</button>
         <p id="status">Waiting for connection...</p>
         <p id="blockNumberDisplay"></p>
