@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holesky Block Number</title>
+    <script src="https://cdn.ethers.io/lib/ethers-6.13.1.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #status, #blockNumberDisplay {
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #555;
+            word-wrap: break-word; /* Ensures long error messages wrap */
+        }
+        #blockNumberDisplay strong {
+            color: #28a745;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Holesky Block Number Checker</h1>
+        <button id="connectButton">Connect to MetaMask & Get Block Number</button>
+        <p id="status">Waiting for connection...</p>
+        <p id="blockNumberDisplay"></p>
+    </div>
+
+    <script>
+        const connectButton = document.getElementById('connectButton');
+        const statusDisplay = document.getElementById('status');
+        const blockNumberDisplay = document.getElementById('blockNumberDisplay');
+
+        // Function to update status and block number
+        function updateDisplay(status, blockNumber = null) {
+            statusDisplay.textContent = status;
+            if (blockNumber !== null) {
+                blockNumberDisplay.innerHTML = `Current Holesky Block Number: <strong>${blockNumber}</strong>`;
+            } else {
+                blockNumberDisplay.textContent = '';
+            }
+        }
+
+        // Main function to connect and get block number
+        async function getHoleskyBlockNumber() {
+            updateDisplay("Connecting to MetaMask...");
+
+            if (typeof window.ethereum === 'undefined') {
+                updateDisplay("MetaMask is not installed. Please install it to use this DApp.");
+                return;
+            }
+
+            try {
+                // Request account access (this will trigger MetaMask pop-up)
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+                // Create an ethers.js BrowserProvider using the injected window.ethereum
+                const provider = new ethers.BrowserProvider(window.ethereum);
+
+                // Get the network details to verify it's Holesky
+                const network = await provider.getNetwork();
+
+                // Holesky Chain ID is 17000
+                const holeskyChainId = 17000n; // Use BigInt for chain ID comparison with ethers v6
+
+                if (network.chainId !== holeskyChainId) {
+                    updateDisplay(`Connected to wrong network. Please switch to Holesky (Chain ID: ${holeskyChainId}) in MetaMask.`);
+                    // Optionally, you can prompt the user to switch networks
+                    // try {
+                    //     await window.ethereum.request({
+                    //         method: 'wallet_switchEthereumChain',
+                    //         params: [{ chainId: '0x4268' }], // Holesky chainId in hex
+                    //     });
+                    //     // After switching, you might want to re-run the get block number logic
+                    //     updateDisplay("Switched to Holesky. Getting block number...");
+                    //     const newBlockNumber = await provider.getBlockNumber();
+                    //     updateDisplay("Connected and fetched!", newBlockNumber);
+                    // } catch (switchError) {
+                    //     if (switchError.code === 4902) { // Chain not added
+                    //         updateDisplay("Holesky not added to MetaMask. Please add it manually or click the button again after it's added.");
+                    //         // You could also add the chain programmatically here if you have RPC details
+                    //     } else {
+                    //         updateDisplay(`Failed to switch network: ${switchError.message}`);
+                    //     }
+                    // }
+                    return;
+                }
+
+                updateDisplay("Connected to Holesky. Fetching block number...");
+
+                // Get the current block number
+                const blockNumber = await provider.getBlockNumber();
+                updateDisplay("Connected and fetched!", blockNumber);
+
+            } catch (error) {
+                console.error("Error connecting to MetaMask or getting block number:", error);
+                if (error.code === 4001) {
+                    updateDisplay("MetaMask: User rejected the connection request.");
+                } else if (error.code === -32002) {
+                     updateDisplay("MetaMask: Already processing an account request. Please check your MetaMask window.");
+                }
+                else {
+                    updateDisplay(`Error: ${error.message}`);
+                }
+            }
+        }
+
+        // Event listener for the button
+        connectButton.addEventListener('click', getHoleskyBlockNumber);
+
+        // Optional: Listen for accountsChanged and chainChanged events
+        if (window.ethereum) {
+            window.ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length === 0) {
+                    updateDisplay("MetaMask account disconnected.");
+                } else {
+                    // Account changed or reconnected, try getting block number again
+                    getHoleskyBlockNumber();
+                }
+            });
+
+            window.ethereum.on('chainChanged', (chainId) => {
+                updateDisplay(`Network changed to Chain ID: ${parseInt(chainId, 16)}. Re-checking Holesky connection...`);
+                getHoleskyBlockNumber();
+            });
+        }
+    </script>
+</body>
+</html>
