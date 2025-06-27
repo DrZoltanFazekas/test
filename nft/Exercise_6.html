@@ -11,17 +11,13 @@
         const blockNumberDisplay = document.getElementById('blockNumberDisplay');
 
         // Function to update status and block number
-        function updateDisplay(status, blockNumber = null) {
+        function updateDisplay(status, blockNumber = null, ethBalance = null) {
             statusDisplay.textContent = status;
-            if (blockNumber !== null) {
-                blockNumberDisplay.innerHTML = `
-                	Current Block Number: <strong>${blockNumber}</strong><br>
-                	Current ETH Balance: <string>${ethers.formatEther(ethBalance)}</strong><br>
-                	Current ERC20 Balance: 
-                `;
-            } else {
-                blockNumberDisplay.textContent = '';
-            }
+            blockNumberDisplay.innerHTML = `
+        	Current Block Number: <strong>${blockNumber}</strong><br>
+        	Current ETH Balance: <string>${ethers.formatEther(ethBalance)}</strong><br>
+        	Current ERC20 Balance: 
+            `;
         }
 
         // Main function to connect and get block number
@@ -37,7 +33,7 @@
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
                 const provider = new ethers.BrowserProvider(window.ethereum);
                 const network = await provider.getNetwork();
-                const holeskyChainId = 17000n; // Use BigInt for chain ID comparison with ethers v6
+                const holeskyChainId = 17000n;
 
                 if (network.chainId !== holeskyChainId) {
                     updateDisplay(`Connected to wrong network. Please switch to Holesky (Chain ID: ${holeskyChainId}) in MetaMask.`);
@@ -67,7 +63,7 @@
                 const blockNumber = await provider.getBlockNumber();
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 const ethBalance = await provider.getBalance(accounts[0]);
-                updateDisplay("Connected and fetched!", blockNumber);
+                updateDisplay("Connected and fetched!", blockNumber, ethBalance);
 
             } catch (error) {
                 console.error("Error connecting to MetaMask or getting block number:", error);
@@ -154,7 +150,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Holesky Test Page 0.0.1</h1>
+        <h1>Holesky Test Page 0.0.2</h1>
         <button id="connectButton">Connect to MetaMask & Get Block Number</button>
         <p id="status">Waiting for connection...</p>
         <p id="blockNumberDisplay"></p>
