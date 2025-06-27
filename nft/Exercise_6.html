@@ -4,66 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Holesky Block Number</title>
-    <script src="https://cdn.ethers.io/lib/ethers-6.13.1.umd.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #f0f2f5;
-            color: #333;
-        }
-        .container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 90%;
-            max-width: 500px;
-        }
-        h1 {
-            color: #007bff;
-            margin-bottom: 20px;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #status, #blockNumberDisplay {
-            margin-top: 20px;
-            font-size: 1.1em;
-            color: #555;
-            word-wrap: break-word; /* Ensures long error messages wrap */
-        }
-        #blockNumberDisplay strong {
-            color: #28a745;
-            font-size: 1.2em;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Holesky Block Number Checker</h1>
-        <button id="connectButton">Connect to MetaMask & Get Block Number</button>
-        <p id="status">Waiting for connection...</p>
-        <p id="blockNumberDisplay"></p>
-    </div>
-
-    <script>
+    <script type="module">
+    	import { ethers } from "https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.min.js";
         const connectButton = document.getElementById('connectButton');
         const statusDisplay = document.getElementById('status');
         const blockNumberDisplay = document.getElementById('blockNumberDisplay');
@@ -161,6 +103,63 @@
                 getHoleskyBlockNumber();
             });
         }
-    </script>
+   </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #status, #blockNumberDisplay {
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #555;
+            word-wrap: break-word; /* Ensures long error messages wrap */
+        }
+        #blockNumberDisplay strong {
+            color: #28a745;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Holesky Block Number Checker</h1>
+        <button id="connectButton">Connect to MetaMask & Get Block Number</button>
+        <p id="status">Waiting for connection...</p>
+        <p id="blockNumberDisplay"></p>
+    </div>
 </body>
 </html>
