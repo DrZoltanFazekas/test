@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Holesky Block Number</title>
+    <title>Holesky Test Page</title>
     <script type="module">
     	import { ethers } from "https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.min.js";
         const connectButton = document.getElementById('connectButton');
@@ -14,7 +14,11 @@
         function updateDisplay(status, blockNumber = null) {
             statusDisplay.textContent = status;
             if (blockNumber !== null) {
-                blockNumberDisplay.innerHTML = `Current Holesky Block Number: <strong>${blockNumber}</strong>`;
+                blockNumberDisplay.innerHTML = `
+                	Current Block Number: <strong>${blockNumber}</strong><br>
+                	Current ETH Balance: 
+                	Current ERC20 Balance: 
+                `;
             } else {
                 blockNumberDisplay.textContent = '';
             }
@@ -156,7 +160,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Holesky Block Number Checker</h1>
+        <h1>Holesky Test Page 0.0.1</h1>
         <button id="connectButton">Connect to MetaMask & Get Block Number</button>
         <p id="status">Waiting for connection...</p>
         <p id="blockNumberDisplay"></p>
