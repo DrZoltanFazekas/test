@@ -16,7 +16,7 @@
             if (blockNumber !== null) {
                 blockNumberDisplay.innerHTML = `
                 	Current Block Number: <strong>${blockNumber}</strong><br>
-                	Current ETH Balance: 
+                	Current ETH Balance: <string>${ethers.formatEther(ethBalance)}</strong><br>
                 	Current ERC20 Balance: 
                 `;
             } else {
@@ -34,16 +34,9 @@
             }
 
             try {
-                // Request account access (this will trigger MetaMask pop-up)
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
-
-                // Create an ethers.js BrowserProvider using the injected window.ethereum
                 const provider = new ethers.BrowserProvider(window.ethereum);
-
-                // Get the network details to verify it's Holesky
                 const network = await provider.getNetwork();
-
-                // Holesky Chain ID is 17000
                 const holeskyChainId = 17000n; // Use BigInt for chain ID comparison with ethers v6
 
                 if (network.chainId !== holeskyChainId) {
@@ -71,8 +64,9 @@
 
                 updateDisplay("Connected to Holesky. Fetching block number...");
 
-                // Get the current block number
                 const blockNumber = await provider.getBlockNumber();
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const ethBalance = await provider.getBalance(accounts[0]);
                 updateDisplay("Connected and fetched!", blockNumber);
 
             } catch (error) {
